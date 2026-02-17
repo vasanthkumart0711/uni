@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Multi-Tool Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg: #f8fafc; 
+            --card: #ffffff; 
+            --accent: #3b82f6;
+            --text-main: #0f172a;
+        }
+        body { 
+            background-color: var(--bg); 
+            color: var(--text-main); 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.3s ease; 
+        }
+        .glass-card { 
+            background: var(--card); 
+            border-radius: 24px; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.1);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .sidebar-item {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar-item:hover { 
+            background: #eff6ff; 
+            color: #2563eb; 
+            transform: translateX(8px); 
+        }
+        .active-nav {
+            background: #2563eb !important;
+            color: white !important;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+        }
+        .hidden { display: none; }
+        .auth-screen { 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: radial-gradient(circle at top right, #e0f2fe, #f8fafc); 
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-view { animation: slideUp 0.5s ease-out forwards; }
+    </style>
+</head>
+<body>
+
+    <div id="login-page" class="auth-screen p-4">
+        <div class="max-w-md w-full p-1 rounded-[32px] bg-gradient-to-br from-blue-500 to-indigo-600 shadow-2xl">
+            <div class="bg-white p-10 rounded-[28px] text-center">
+                <div class="w-20 h-20 bg-blue-50 rounded-3xl mx-auto mb-6 flex items-center justify-center text-4xl shadow-inner">🎓</div>
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-2">UniPortal v4.0</h1>
+                <p class="text-slate-500 mb-8 font-medium">Please enter your credentials</p>
+                
+                <form id="login-form" class="space-y-5">
+                    <div class="text-left">
+                        <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Username</label>
+                        <input type="text" id="login-user" required
+                               class="w-full mt-1 px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all text-slate-900" 
+                               placeholder="student or admin">
+                    </div>
+                    <div class="text-left">
+                        <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Password</label>
+                        <input type="password" id="login-pass" required
+                               class="w-full mt-1 px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all text-slate-900" 
+                               placeholder="••••">
+                    </div>
+                    <p id="login-error" class="text-red-500 text-sm hidden font-semibold">Invalid username or password!</p>
+                    <button type="submit" 
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98]">
+                        Sign In
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-dashboard" class="flex min-h-screen hidden">
+        <nav class="w-72 bg-white p-6 space-y-8 hidden md:block border-r border-slate-100 relative">
+            <div class="flex items-center gap-3 px-2 py-4">
+                <div class="bg-blue-600 p-2 rounded-lg text-white">⚡</div>
+                <h2 class="text-xl font-black tracking-tight text-slate-800">UNIPORTAL</h2>
+            </div>
+            
+            <ul class="space-y-3" id="main-nav">
+                <li><a href="#" data-target="shop-section" class="sidebar-item active-nav block p-4 rounded-2xl font-semibold flex items-center gap-4">🛒 <span>Catalog</span></a></li>
+                <li><a href="#" data-target="analyzer-section" class="sidebar-item block p-4 rounded-2xl font-semibold flex items-center gap-4 text-slate-500">📊 <span>Performance</span></a></li>
+                <li><a href="#" data-target="todo-section" class="sidebar-item block p-4 rounded-2xl font-semibold flex items-center gap-4 text-slate-500">📝 <span>Tasks</span></a></li>
+                <li><a href="#" data-target="timer-section" class="sidebar-item block p-4 rounded-2xl font-semibold flex items-center gap-4 text-slate-500">⏳ <span>Focus</span></a></li>
+                <li><a href="#" data-target="oop-section" class="sidebar-item block p-4 rounded-2xl font-semibold flex items-center gap-4 text-slate-500">🏗️ <span>System Roles</span></a></li>
+            </ul>
+
+            <div class="absolute bottom-10 left-6 right-6">
+                <div class="p-4 bg-slate-50 rounded-2xl mb-4 border border-slate-100">
+                    <p id="user-display" class="text-sm font-bold text-blue-600 capitalize"></p>
+                    <p id="user-role-badge" class="text-[10px] text-slate-400 uppercase font-black mt-1"></p>
+                </div>
+                <button id="logout-btn" class="w-full text-left p-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition">Logout</button>
+            </div>
+        </nav>
+
+        <main class="flex-1 p-10 overflow-y-auto">
+            
+            <section id="timer-section" class="content-view hidden animate-view">
+                <div class="max-w-md mx-auto text-center glass-card p-12">
+                    <h2 class="text-2xl font-extrabold mb-2 text-slate-800">Study Timer</h2>
+                    <p class="text-slate-400 mb-8 text-sm">Boost your productivity</p>
+                    
+                    <div class="flex gap-4 justify-center mb-10">
+                        <div class="flex flex-col">
+                            <label class="text-[10px] uppercase font-bold text-slate-400 mb-2">Minutes</label>
+                            <input type="number" id="timer-min" min="0" max="99" value="0" class="w-24 p-4 text-center bg-slate-50 border border-slate-100 rounded-2xl font-bold text-3xl focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <span class="text-4xl self-center mt-4 text-slate-300 font-light">:</span>
+                        <div class="flex flex-col">
+                            <label class="text-[10px] uppercase font-bold text-slate-400 mb-2">Seconds</label>
+                            <input type="number" id="timer-sec" min="0" max="59" value="0" class="w-24 p-4 text-center bg-slate-50 border border-slate-100 rounded-2xl font-bold text-3xl focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+
+                    <h2 id="timer-display" class="text-[100px] leading-none font-black text-blue-600 tracking-tighter mb-10">00:00</h2>
+                    
+                    <div class="flex gap-4">
+                        <button id="start-timer" class="flex-[2] bg-blue-600 hover:bg-blue-700 text-white px-6 py-5 rounded-[20px] font-bold shadow-lg shadow-blue-100 transition-all active:scale-95">Start Focus Session</button>
+                        <button id="reset-timer" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 px-6 py-5 rounded-[20px] font-bold transition">Reset</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="shop-section" class="content-view animate-view">
+                <div class="flex justify-between items-end mb-10">
+                    <div>
+                        <h2 class="text-4xl font-extrabold text-slate-900">University Store</h2>
+                        <p class="text-slate-500 mt-2 font-medium">Premium tools for your academic success</p>
+                    </div>
+                    <span class="bg-blue-50 text-blue-600 px-6 py-2 rounded-full text-sm font-bold border border-blue-100">4 Items Available</span>
+                </div>
+                <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+            </section>
+
+            <section id="analyzer-section" class="content-view hidden animate-view">
+                <h2 class="text-3xl font-extrabold mb-8">Performance Analyzer</h2>
+                <div class="glass-card p-10">
+                    <form id="analyzer-form" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        <input type="text" id="stu-name" placeholder="Student Name" class="md:col-span-2 p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-blue-500" required>
+                        <input type="number" class="sub-mark p-4 bg-slate-50 border border-slate-100 rounded-2xl text-center" placeholder="Math" required>
+                        <input type="number" class="sub-mark p-4 bg-slate-50 border border-slate-100 rounded-2xl text-center" placeholder="Science" required>
+                        <button class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold hover:bg-slate-800 transition">Analyze</button>
+                    </form>
+                    <div class="overflow-x-auto mt-10">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="text-slate-400 text-xs uppercase tracking-widest border-b border-slate-50">
+                                    <th class="pb-4 px-4 font-bold">Student</th>
+                                    <th class="pb-4 px-4 font-bold">Grade Average</th>
+                                    <th class="pb-4 px-4 font-bold">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stu-table-body" class="divide-y divide-slate-50"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="todo-section" class="content-view hidden animate-view">
+                <div class="max-w-2xl glass-card p-10">
+                    <h2 class="text-2xl font-extrabold mb-6">Task Manager</h2>
+                    <div class="flex gap-3 mb-10">
+                        <input type="text" id="todo-input" class="flex-1 p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500" placeholder="Add a new task...">
+                        <button id="add-todo" class="bg-blue-600 text-white px-10 rounded-2xl font-bold shadow-lg shadow-blue-100">Add</button>
+                    </div>
+                    <ul id="todo-list" class="space-y-4"></ul>
+                </div>
+            </section>
+
+            <section id="oop-section" class="content-view hidden animate-view">
+                <div class="glass-card p-10">
+                    <h2 class="text-2xl font-extrabold mb-2">Object Role System</h2>
+                    <p class="text-slate-500 mb-8">Generate class-based user instances</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div class="space-y-5">
+                            <input type="text" id="oop-name" placeholder="Entity Name" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none">
+                            <select id="oop-role" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none appearance-none">
+                                <option value="student">Student Class</option>
+                                <option value="admin">Admin Class</option>
+                            </select>
+                            <button id="create-instance" class="w-full bg-indigo-600 text-white py-5 rounded-2xl font-bold shadow-lg shadow-indigo-100">Instantiate Object</button>
+                        </div>
+                        <div id="oop-output" class="bg-slate-900 p-8 rounded-[24px] font-mono text-emerald-400 shadow-inner min-h-[150px]">
+                            <span class="text-slate-500">// Terminal ready...</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        const App = {
+            init() {
+                this.setupNavigation();
+                authSystem.init();
+                performanceAnalyzer.init();
+                todoApp.init();
+                productStore.init();
+                productivityTools.init();
+                oopDemo.init();
+            },
+            setupNavigation() {
+                document.querySelectorAll('#main-nav a').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const target = e.currentTarget.dataset.target;
+                        
+                        document.querySelectorAll('.sidebar-item').forEach(l => {
+                            l.classList.remove('active-nav', 'text-white');
+                            l.classList.add('text-slate-500');
+                        });
+                        e.currentTarget.classList.add('active-nav');
+                        e.currentTarget.classList.remove('text-slate-500');
+
+                        document.querySelectorAll('.content-view').forEach(v => v.classList.add('hidden'));
+                        document.getElementById(target).classList.remove('hidden');
+                    });
+                });
+            }
+        };
+
+        const authSystem = {
+            init() {
+                const loginForm = document.getElementById('login-form');
+                if (loginForm) {
+                    loginForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const user = document.getElementById('login-user').value.toLowerCase();
+                        const pass = document.getElementById('login-pass').value;
+
+                        // LOGIN LOGIC: student/1234 or admin/1234
+                        if ((user === 'student' && pass === '1234') || (user === 'admin' && pass === '1234')) {
+                            this.login(user);
+                        } else {
+                            document.getElementById('login-error').classList.remove('hidden');
+                        }
+                    });
+                }
+
+                document.getElementById('logout-btn').addEventListener('click', () => {
+                    localStorage.removeItem('active_user');
+                    location.reload();
+                });
+
+                const session = localStorage.getItem('active_user');
+                if(session) this.login(session);
+            },
+            login(name) {
+                localStorage.setItem('active_user', name);
+                document.getElementById('login-page').classList.add('hidden');
+                document.getElementById('main-dashboard').classList.remove('hidden');
+                document.getElementById('user-display').textContent = name;
+                document.getElementById('user-role-badge').textContent = name === 'admin' ? 'Root Administrator' : 'University Student';
+            }
+        };
+
+        const productivityTools = {
+            timer: null,
+            totalSeconds: 0,
+            init() {
+                const startBtn = document.getElementById('start-timer');
+                const resetBtn = document.getElementById('reset-timer');
+                
+                startBtn.addEventListener('click', () => {
+                    if (this.timer) {
+                        clearInterval(this.timer);
+                        this.timer = null;
+                        startBtn.textContent = 'Resume Session';
+                        return;
+                    }
+
+                    const mins = parseInt(document.getElementById('timer-min').value) || 0;
+                    const secs = parseInt(document.getElementById('timer-sec').value) || 0;
+                    
+                    if (this.totalSeconds <= 0) {
+                        this.totalSeconds = (mins * 60) + secs;
+                    }
+
+                    if (this.totalSeconds <= 0) return;
+
+                    startBtn.textContent = 'Pause Session';
+
+                    this.timer = setInterval(() => {
+                        this.totalSeconds--;
+                        this.updateDisplay();
+                        if (this.totalSeconds <= 0) {
+                            clearInterval(this.timer);
+                            this.timer = null;
+                            startBtn.textContent = 'Start Focus Session';
+                            alert("Time's up!");
+                        }
+                    }, 1000);
+                });
+
+                resetBtn.addEventListener('click', () => {
+                    clearInterval(this.timer);
+                    this.timer = null;
+                    this.totalSeconds = 0;
+                    document.getElementById('timer-display').textContent = "00:00";
+                    startBtn.textContent = 'Start Focus Session';
+                });
+            },
+            updateDisplay() {
+                const m = Math.floor(this.totalSeconds / 60);
+                const s = this.totalSeconds % 60;
+                document.getElementById('timer-display').textContent = 
+                    `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            }
+        };
+
+        const productStore = {
+            products: [
+                { name: "Algorithms 4th Ed", cat: "Books", price: 85, rate: 4.8, icon: "📚" },
+                { name: "Graphing Calculator", cat: "Stationery", price: 120, rate: 4.7, icon: "🧮" },
+                { name: "Noise Cancel Pro", cat: "Electronics", price: 199, rate: 4.8, icon: "🎧" },
+                { name: "Modern Physics", cat: "Books", price: 60, rate: 4.5, icon: "📖" }
+            ],
+            init() { this.render(); },
+            render() {
+                document.getElementById('product-grid').innerHTML = this.products.map(p => `
+                    <div class="glass-card p-6 group cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                        <div class="h-40 bg-slate-50 rounded-2xl flex items-center justify-center text-6xl mb-6 group-hover:scale-110 transition-transform">${p.icon}</div>
+                        <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">${p.cat}</p>
+                        <h4 class="font-bold text-slate-800">${p.name}</h4>
+                        <div class="flex justify-between items-center mt-5">
+                            <span class="text-xl font-black text-slate-900">$${p.price}</span>
+                            <span class="bg-yellow-50 text-yellow-600 px-3 py-1 rounded-lg text-xs font-bold">★ ${p.rate}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        };
+
+        const performanceAnalyzer = {
+            data: [],
+            init() {
+                const form = document.getElementById('analyzer-form');
+                if (form) {
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const name = document.getElementById('stu-name').value;
+                        const marks = Array.from(document.querySelectorAll('.sub-mark')).map(m => parseInt(m.value));
+                        const avg = marks.reduce((a,b)=>a+b, 0) / marks.length;
+                        this.data.push({ name, avg });
+                        this.render();
+                        e.target.reset();
+                    });
+                }
+            },
+            render() {
+                document.getElementById('stu-table-body').innerHTML = this.data.map(s => `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-5 font-bold text-slate-700">${s.name}</td>
+                        <td class="p-5 text-slate-600 font-medium">${s.avg.toFixed(1)}%</td>
+                        <td class="p-5"><span class="px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-xs font-black">EXCELLENT</span></td>
+                    </tr>
+                `).join('');
+            }
+        };
+
+        const todoApp = {
+            list: [],
+            init() {
+                const addBtn = document.getElementById('add-todo');
+                if (addBtn) {
+                    addBtn.addEventListener('click', () => {
+                        const val = document.getElementById('todo-input').value;
+                        if(val) { this.list.push(val); this.render(); document.getElementById('todo-input').value = ''; }
+                    });
+                }
+            },
+            render() {
+                document.getElementById('todo-list').innerHTML = this.list.map((t, i) => `
+                    <li class="flex justify-between items-center p-5 bg-white border border-slate-100 rounded-2xl shadow-sm">
+                        <div class="flex items-center gap-4 font-semibold text-slate-700">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <span>${t}</span>
+                        </div>
+                        <button onclick="todoApp.del(${i})" class="text-xs font-bold text-red-400 hover:text-red-600 transition uppercase tracking-tighter">Delete</button>
+                    </li>
+                `).join('');
+            },
+            del(i) { this.list.splice(i, 1); this.render(); }
+        };
+
+        class Generic { constructor(n) { this.n = n; } say() { return `User: ${this.n}`; } }
+        class Admin extends Generic { say() { return `SYSTEM_ADMIN_ACCESS: ${this.n}`; } }
+        class Student extends Generic { say() { return `STUDENT_PROFILE: ${this.n}`; } }
+
+        const oopDemo = {
+            init() {
+                const createBtn = document.getElementById('create-instance');
+                if (createBtn) {
+                    createBtn.addEventListener('click', () => {
+                        const n = document.getElementById('oop-name').value || "Guest";
+                        const r = document.getElementById('oop-role').value;
+                        const obj = r === 'admin' ? new Admin(n) : new Student(n);
+                        document.getElementById('oop-output').innerHTML = `
+                            <div class="text-emerald-500 animate-pulse">> Initializing Class...</div>
+                            <div class="mt-2 text-white">> Instance Created Successfully!</div>
+                            <div class="mt-2 text-indigo-400">> ${obj.say()}</div>
+                        `;
+                    });
+                }
+            }
+        };
+
+        App.init();
+    </script>
+</body>
+</html>
